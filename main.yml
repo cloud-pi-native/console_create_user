@@ -1,0 +1,68 @@
+- hosts: localhost
+  gather_facts: false
+  tags:
+  - always
+  tasks:
+  - name: Read new users from CSV file
+    community.general.read_csv:
+      path: "{{ lookup('ansible.builtin.env', 'USERS_FILE') }}"
+      delimiter: "{{ lookup('ansible.builtin.env', 'CSV_DELIMITER', default=';')  }}"
+    register: new_users
+
+  - name: Users to add
+    debug:
+      msg: "Prénom: {{ item.first_name }}, Nom: {{ item.last_name }}, courriel: {{item.email}}"
+    loop: "{{ new_users.list }}"
+
+- hosts: localhost
+  gather_facts: false
+  tags:
+  - never
+  - keycloak
+  tasks:
+  - name: "Create users on Keycloak"
+    community.general.keycloak_user:
+      auth_keycloak_url: "{{ keycloak_auth_url }}"
+      auth_username: "{{ keycloak_auth_username }}"
+      auth_password: "{{ keycloak_auth_password  }}"
+      auth_realm: "{{ keycloak_auth_realm }}"
+      realm: "{{ keycloak_realm }}"
+      username: "{{ item.email }}"
+      firstName: "{{ item.first_name }}"
+      lastName: "{{ item.last_name }}"
+      email: "{{ item.email }}"
+      enabled: true
+      emailVerified: false
+      credentials:
+          - type: password
+            value: "{{ temporary_password }}"
+            temporary: true
+      state: present
+      validate_certs: "{{ keycloak_validate_certs }}"
+    loop: "{{ new_users.list }}"
+
+- hosts: localhost
+  gather_facts: false
+  tags:
+  - never
+  - openproject
+  tasks:
+  - name: "Create users on OpenProject"
+    ansible.builtin.uri:
+      url: "{{ openproject_url }}/api/v3/users"
+      url_username: "{{ openproject_api_key_username }}"
+      url_password: "{{ openproject_api_key_password }}"
+      method: POST
+      body:
+        login: "{{ item.email }}"
+        password: "{{ temporary_password }}"
+        firstName: "{{ item.first_name }}"
+        lastName: "{{ item.last_name }}"
+        email: "{{ item.email }}"
+        admin: "{{ openproject_admin }}"
+        status: "{{ openproject_status }}"
+        language: "{{ openproject_language }}"
+      force_basic_auth: true
+      status_code: 201
+      body_format: json
+    loop: "{{ new_users.list }}"

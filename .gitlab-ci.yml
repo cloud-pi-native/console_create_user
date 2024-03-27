@@ -1,0 +1,60 @@
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  USERS_FILE: "users.csv"
+  USERS:
+    value: "last_name,first_name,email\n"
+    description: "Put CSV content as the value (last_name,first_name,email)."
+  CREATE_KEYCLOAK_USERS: 
+    value: "true"
+    description: "Whether the Keycloak add user playbook should run."
+    options:
+      - "true"
+      - "false"
+  CREATE_OPENPROJECT_USERS: 
+    value: "true"
+    description: "Whether the Openproject add user playbook should run."
+    options:
+      - "true"
+      - "false"
+  CSV_DELIMITER:
+    value: ","
+    description: "The CSV separator used in the input file."
+  CSV_DATA_HEADER:
+    value: "true"
+    description: "Does CSV has header line ?"
+    options:
+      - "true"
+      - "false"
+
+default:
+  image: python:latest
+  artifacts:
+    paths:
+      - "$USERS_FILE"
+    expire_in: "1 hour"
+
+cache:
+  paths:
+    - .cache/pip
+
+before_script:
+  - python --version ; pip --version  # For debugging
+  - pip install -r requirements.txt # Install ansible
+  - ansible-galaxy collection install -r requirements.yml --force
+  - if [ "$CSV_DATA_HEADER" == "false" ]; then echo "last_name,first_name,email" > "$USERS_FILE"; fi
+  - echo "$USERS" >> "$USERS_FILE"
+
+stages:
+  - create-users
+
+ansible-playbook:
+  rules:
+    - when: manual
+  stage: create-users
+  script:
+  - export ANSIBLE_TAGS_ARR=()
+  - if [ "$CREATE_KEYCLOAK_USERS" == "true" ]; then ANSIBLE_TAGS_ARR+=("keycloak"); fi
+  - if [ "$CREATE_OPENPROJECT_USERS" == "true" ]; then ANSIBLE_TAGS_ARR+=("openproject"); fi
+  - export a_tmp=${ANSIBLE_TAGS_ARR[*]}
+  - export A_TAGS=${a_tmp// /,}
+  - "ansible-playbook main.yml -i localhost, --connection=local --vault-password-file=$ANSIBLE_VAULT_PASSWORD_FILE -t \"$A_TAGS\""
