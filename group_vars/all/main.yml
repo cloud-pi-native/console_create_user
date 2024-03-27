@@ -1,0 +1,15 @@
+keycloak_auth_url: "https://keycloak.apps.c6.numerique-interieur.com/"
+keycloak_auth_username: admin
+keycloak_auth_password: "{{ vault_keycloak_auth_password }}"
+keycloak_auth_realm: master
+keycloak_realm: dso
+keycloak_validate_certs: true
+
+openproject_url: "https://support.dev.numerique-interieur.com/"
+openproject_api_key_password: "{{ vault_openproject_api_key_password }}"
+openproject_api_key_username: apikey
+openproject_language: fr
+openproject_status: active
+openproject_admin: false
+
+temporary_password: "{{ vault_temporary_password }}"
