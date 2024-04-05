@@ -28,8 +28,8 @@
       auth_realm: "{{ keycloak_auth_realm }}"
       realm: "{{ keycloak_realm }}"
       username: "{{ item.email }}"
-      firstName: "{{ item.first_name }}"
-      lastName: "{{ item.last_name }}"
+      firstName: "{{ item.first_name | capitalize }}"
+      lastName: "{{ item.last_name | capitalize }}"
       email: "{{ item.email }}"
       enabled: true
       emailVerified: false
@@ -56,8 +56,8 @@
       body:
         login: "{{ item.email }}"
         password: "{{ temporary_password }}"
-        firstName: "{{ item.first_name }}"
-        lastName: "{{ item.last_name }}"
+        firstName: "{{ item.first_name | capitalize }}"
+        lastName: "{{ item.last_name | capitalize }}"
         email: "{{ item.email }}"
         admin: "{{ openproject_admin }}"
         status: "{{ openproject_status }}"
