@@ -32,7 +32,7 @@
       lastName: "{{ item.last_name | capitalize }}"
       email: "{{ item.email }}"
       enabled: true
-      emailVerified: false
+      emailVerified: true
       credentials:
           - type: password
             value: "{{ temporary_password }}"
