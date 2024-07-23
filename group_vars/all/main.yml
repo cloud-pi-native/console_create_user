@@ -1,4 +1,4 @@
-keycloak_auth_url: "https://keycloak.apps.c6.numerique-interieur.com/"
+keycloak_auth_url: "https://keycloak.apps.dso.numerique-interieur.com/"
 keycloak_auth_username: admin
 keycloak_auth_password: "{{ vault_keycloak_auth_password }}"
 keycloak_auth_realm: master
