@@ -5,7 +5,7 @@ keycloak_auth_realm: master
 keycloak_realm: dso
 keycloak_validate_certs: true
 
-openproject_url: "https://support.dev.numerique-interieur.com/"
+openproject_url: "https://support.dev.numerique-interieur.com"
 openproject_api_key_password: "{{ vault_openproject_api_key_password }}"
 openproject_api_key_username: apikey
 openproject_language: fr
