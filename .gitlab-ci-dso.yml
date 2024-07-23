@@ -48,8 +48,8 @@ stages:
   - create-users
 
 ansible-playbook:
-  rules:
-    - when: manual
+  only: 
+    - web
   stage: create-users
   script:
   - export ANSIBLE_TAGS_ARR=()
