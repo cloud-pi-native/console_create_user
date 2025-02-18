@@ -7,6 +7,12 @@
     debug:
       msg: "Cluster cible: {{ cluster_dso }}"
 
+  - name: Set pwd
+    # Comment
+    ansible.builtin.set_fact:
+      cacheable: false
+      current_pwd: "{{ lookup('vars', current.keycloak_auth_password) }}"
+
   - name: Read new users from CSV file
     community.general.read_csv:
       path: "{{ lookup('ansible.builtin.env', 'USERS_FILE') }}"
