@@ -1,6 +1,14 @@
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   USERS_FILE: "users.csv"
+  CLUSTER_DSO:
+    value: "sdid"
+    description: "Choix du cluster pour créer les comptes keycloak"
+    options:
+      - "ovh"
+      - "sdid"
+      - "external"
+      - "formation"
   USERS:
     value: "last_name,first_name,email\n"
     description: "Put CSV content as the value (last_name,first_name,email)."

@@ -1,9 +1,38 @@
-keycloak_auth_url: "https://keycloak.apps.dso.numerique-interieur.com/"
-keycloak_auth_username: admin
-keycloak_auth_password: "{{ vault_keycloak_auth_password }}"
-keycloak_auth_realm: master
-keycloak_realm: dso
-keycloak_validate_certs: true
+ovh:
+  keycloak_auth_url: "https://keycloak.apps.dso.numerique-interieur.com/"
+  keycloak_auth_username: admin
+  keycloak_auth_password: "{{ vault_keycloak_auth_password_ovh }}"
+  keycloak_auth_realm: master
+  keycloak_realm: dso
+  keycloak_validate_certs: true
+
+external:
+  keycloak_auth_url: "https://keycloak.external.cpin.numerique-interieur.com"
+  keycloak_auth_username: admin
+  keycloak_auth_password: "{{ vault_keycloak_auth_password_external }}"
+  keycloak_auth_realm: master
+  keycloak_realm: dso
+  keycloak_validate_certs: true
+
+sdid:
+  keycloak_auth_url: "https://keycloak.sdid.cpin.numerique-interieur.com/"
+  keycloak_auth_username: admin
+  keycloak_auth_password: "{{ vault_keycloak_auth_password_sdid }}"
+  keycloak_auth_realm: master
+  keycloak_realm: dso
+  keycloak_validate_certs: true
+
+formation:
+  keycloak_auth_url: "https://keycloak.formation.cpin.numerique-interieur.com"
+  keycloak_auth_username: admin
+  keycloak_auth_password: "{{ vault_keycloak_auth_password_formation }}"
+  keycloak_auth_realm: master
+  keycloak_realm: dso
+  keycloak_validate_certs: true
+
+cluster_dso: "{{ lookup('ansible.builtin.env', 'CLUSTER_DSO') }}"
+current: "{{ vars[cluster_dso] }}"
+
 
 openproject_url: "https://support.dev.numerique-interieur.com"
 openproject_api_key_password: "{{ vault_openproject_api_key_password }}"
@@ -13,3 +42,4 @@ openproject_status: active
 openproject_admin: false
 
 temporary_password: "{{ vault_temporary_password }}"
+

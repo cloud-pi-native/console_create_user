@@ -3,6 +3,10 @@
   tags:
   - always
   tasks:
+  - name: Debug
+    debug:
+      msg: "Cluster cible: {{ cluster_dso }}"
+
   - name: Read new users from CSV file
     community.general.read_csv:
       path: "{{ lookup('ansible.builtin.env', 'USERS_FILE') }}"
