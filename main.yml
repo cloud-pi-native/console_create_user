@@ -26,11 +26,11 @@
   tasks:
   - name: "Create users on Keycloak"
     community.general.keycloak_user:
-      auth_keycloak_url: "{{ keycloak_auth_url }}"
-      auth_username: "{{ keycloak_auth_username }}"
-      auth_password: "{{ keycloak_auth_password  }}"
-      auth_realm: "{{ keycloak_auth_realm }}"
-      realm: "{{ keycloak_realm }}"
+      auth_keycloak_url: "{{ current.keycloak_auth_url }}"
+      auth_username: "{{ current.keycloak_auth_username }}"
+      auth_password: "{{ current.keycloak_auth_password  }}"
+      auth_realm: "{{ current.keycloak_auth_realm }}"
+      realm: "{{ current.keycloak_realm }}"
       username: "{{ item.email }}"
       firstName: "{{ item.first_name | capitalize }}"
       lastName: "{{ item.last_name | capitalize }}"
@@ -42,7 +42,7 @@
             value: "{{ temporary_password }}"
             temporary: true
       state: present
-      validate_certs: "{{ keycloak_validate_certs }}"
+      validate_certs: "{{ current.keycloak_validate_certs }}"
     loop: "{{ new_users.list }}"
 
 - hosts: localhost
