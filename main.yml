@@ -11,7 +11,7 @@
     # Comment
     ansible.builtin.set_fact:
       cacheable: false
-      current_pwd: "{{ lookup('vars', current.keycloak_auth_password) }}"
+      current_keycloak_pwd: "{{ lookup('vars', current.keycloak_auth_password) }}"
 
   - name: Read new users from CSV file
     community.general.read_csv:
@@ -34,7 +34,7 @@
     community.general.keycloak_user:
       auth_keycloak_url: "{{ current.keycloak_auth_url }}"
       auth_username: "{{ current.keycloak_auth_username }}"
-      auth_password: "{{ current.keycloak_auth_password  }}"
+      auth_password: "{{ current_keycloak_pwd  }}"
       auth_realm: "{{ current.keycloak_auth_realm }}"
       realm: "{{ current.keycloak_realm }}"
       username: "{{ item.email }}"
