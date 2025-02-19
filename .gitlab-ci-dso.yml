@@ -9,6 +9,7 @@ variables:
       - "sdid"
       - "external"
       - "formation"
+      - "mi"
   USERS:
     value: "last_name,first_name,email\n"
     description: "Put CSV content as the value (last_name,first_name,email)."

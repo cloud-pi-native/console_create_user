@@ -30,6 +30,14 @@ formation:
   keycloak_realm: dso
   keycloak_validate_certs: true
 
+mi:
+  keycloak_auth_url: "https://sso.dso.interieur.rie.gouv.fr"
+  keycloak_auth_username: admin
+  keycloak_auth_password: vault_keycloak_auth_password_mi
+  keycloak_auth_realm: master
+  keycloak_realm: dso
+  keycloak_validate_certs: true
+
 cluster_dso: "{{ lookup('ansible.builtin.env', 'CLUSTER_DSO') }}"
 current: "{{ vars[cluster_dso] }}"
 
