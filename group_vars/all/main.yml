@@ -36,7 +36,7 @@ mi:
   keycloak_auth_password: vault_keycloak_auth_password_mi
   keycloak_auth_realm: master
   keycloak_realm: dso
-  keycloak_validate_certs: true
+  keycloak_validate_certs: false
 
 cluster_dso: "{{ lookup('ansible.builtin.env', 'CLUSTER_DSO') }}"
 current: "{{ vars[cluster_dso] }}"
