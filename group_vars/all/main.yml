@@ -16,7 +16,7 @@ external:
 
 sdid:
   keycloak_auth_url: "https://keycloak.sdid.cpin.numerique-interieur.com"
-  keycloak_auth_username: p.leclainche@actongroup.com
+  keycloak_auth_username: dsoadmin
   keycloak_auth_password: vault_keycloak_auth_password_sdid
   keycloak_auth_realm: master
   keycloak_realm: dso
