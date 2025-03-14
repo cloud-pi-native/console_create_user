@@ -8,7 +8,7 @@ ovh:
 
 external:
   keycloak_auth_url: "https://keycloak.external.cpin.numerique-interieur.com"
-  keycloak_auth_username: admin
+  keycloak_auth_username: dsoadmin
   keycloak_auth_password: vault_keycloak_auth_password_external
   keycloak_auth_realm: master
   keycloak_realm: dso
