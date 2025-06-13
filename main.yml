@@ -21,7 +21,7 @@
 
   - name: Users to add
     debug:
-      msg: "Prénom: {{ item.first_name }}, Nom: {{ item.last_name }}, courriel: {{item.email}}"
+      msg: "Prénom: {{ item.first_name }}, Nom: {{ item.last_name }}, courriel: {{item.email | trim}}"
     loop: "{{ new_users.list }}"
 
 - hosts: localhost
@@ -37,10 +37,10 @@
       auth_password: "{{ current_keycloak_pwd  }}"
       auth_realm: "{{ current.keycloak_auth_realm }}"
       realm: "{{ current.keycloak_realm }}"
-      username: "{{ item.email }}"
-      firstName: "{{ item.first_name | capitalize }}"
-      lastName: "{{ item.last_name | capitalize }}"
-      email: "{{ item.email }}"
+      username: "{{ item.email | trim }}"
+      firstName: "{{ item.first_name | trim | capitalize }}"
+      lastName: "{{ item.last_name | trim | capitalize }}"
+      email: "{{ item.email | trim }}"
       enabled: true
       emailVerified: true
       credentials:
@@ -64,11 +64,11 @@
       url_password: "{{ openproject_api_key_password }}"
       method: POST
       body:
-        login: "{{ item.email }}"
+        login: "{{ item.email | trim }}"
         password: "{{ temporary_password }}"
-        firstName: "{{ item.first_name | capitalize }}"
-        lastName: "{{ item.last_name | capitalize }}"
-        email: "{{ item.email }}"
+        firstName: "{{ item.first_name | trim | capitalize }}"
+        lastName: "{{ item.last_name | trim | capitalize }}"
+        email: "{{ item.email | trim }}"
         admin: "{{ openproject_admin }}"
         status: "{{ openproject_status }}"
         language: "{{ openproject_language }}"
