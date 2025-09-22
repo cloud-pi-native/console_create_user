@@ -22,6 +22,11 @@ update_user_access_level() {
 
 #Read csv env variable and update user access level
 while IFS=, read -r email group_id; do
+  # if email is empty, skip
+  if [[ -z "$email" ]]; then
+    echo "Email is empty, skipping" 1>&2
+    continue
+  fi
   echo "Email: $email, Group ID: $group_id"
   USER_EMAIL=$email
   USER_ID=$(get_user_id || true)
