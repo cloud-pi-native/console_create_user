@@ -1,0 +1,17 @@
+variables:
+  USERS:
+    value: "email,group_id\n"
+    description: "Put CSV content as the value (email,group_id)."
+
+default:
+  image: praqma/network-multitool
+
+stages:
+  - add-maintainer-to-group
+
+add-maintainer-to-group:
+  only: 
+    - web
+  stage: add-maintainer-to-group
+  script:
+  - ./maintainer.sh
