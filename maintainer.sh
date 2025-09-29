@@ -3,7 +3,7 @@ set -euo pipefail
 
 get_user_id() {
   echo "getting user id for email: $USER_EMAIL" 1>&2
-  response=$(curl -s --request GET --header "PRIVATE-TOKEN: $MAINT_GITLAB_TOKEN" --url "$MAINT_GITLAB_URL/api/v4/users?search=$USER_EMAIL")
+  response=$(curl -k -s --request GET --header "PRIVATE-TOKEN: $MAINT_GITLAB_TOKEN" --url "$MAINT_GITLAB_URL/api/v4/users?search=$USER_EMAIL")
   echo "user response: $response" 1>&2
   user_id=$(echo "$response" | jq -r '.[0].id // empty')
   echo "user id: ${user_id:-<none>}" 1>&2
@@ -16,7 +16,7 @@ get_user_id() {
 
 update_user_access_level() {
   echo "updating user access level for user id: $USER_ID and group id: $GROUP_ID"
-  response=$(curl -s --request PUT --header "PRIVATE-TOKEN: $MAINT_GITLAB_TOKEN" --url "$MAINT_GITLAB_URL/api/v4/groups/$GROUP_ID/members/$USER_ID?access_level=40")
+  response=$(curl -k -s --request PUT --header "PRIVATE-TOKEN: $MAINT_GITLAB_TOKEN" --url "$MAINT_GITLAB_URL/api/v4/groups/$GROUP_ID/members/$USER_ID?access_level=40")
   echo "group response: $response"
 }
 
