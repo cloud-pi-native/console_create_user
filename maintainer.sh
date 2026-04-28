@@ -5,6 +5,7 @@ set -euo pipefail
 ADDED=()
 UNKNOWN_EMAILS=()
 UNKNOWN_GROUPS=()
+declare -A GROUP_NAME_CACHE
 
 get_user_id() {
   local email="$1"
@@ -30,6 +31,7 @@ update_user_access_level() {
   local user_id="$1"
   local group_id="$2"
   local email="$3"
+  
 
   echo "  → Ajout du droit maintainer (user: $user_id, group: $group_id)" 1>&2
   local response
@@ -54,16 +56,38 @@ update_user_access_level() {
   fi
 
   echo "  ✓ Droit maintainer ajouté pour $email sur le groupe $group_id" 1>&2
-  ADDED+=("$email → group $group_id")
+  ADDED+=("$email|$group_id")
 }
 
 get_group_name() {
   local group_id="$1"
-  local response
+
+  if [[ -n "${GROUP_NAME_CACHE[$group_id]+x}" ]]; then
+    echo "${GROUP_NAME_CACHE[$group_id]}"
+    return
+  fi
+
+  local response name
   response=$(curl -k -s --request GET \
     --header "PRIVATE-TOKEN: $MAINT_GITLAB_TOKEN" \
     --url "$MAINT_GITLAB_URL/api/v4/groups/$group_id")
-  echo "$response" | jq -r '.name // "nom inconnu"'
+  name=$(echo "$response" | jq -r '.name // empty')
+
+  if [[ -z "$name" ]]; then
+    local project_response project_name
+    project_response=$(curl -k -s --request GET \
+      --header "PRIVATE-TOKEN: $MAINT_GITLAB_TOKEN" \
+      --url "$MAINT_GITLAB_URL/api/v4/projects/$group_id")
+    project_name=$(echo "$project_response" | jq -r '.name // empty')
+    if [[ -n "$project_name" ]]; then
+      name="⚠ c'est un projet : $project_name"
+    else
+      name="id inconnu"
+    fi
+  fi
+
+  GROUP_NAME_CACHE[$group_id]="$name"
+  echo "$name"
 }
 
 # Lecture du CSV et traitement
@@ -92,9 +116,6 @@ while IFS=, read -r email group_id; do
 
 done < <(echo "$USERS" | tr -d '\r' | sed '1s/^\xEF\xBB\xBF//')
 
-# ══════════════════════════════════════════
-# RÉCAPITULATIF
-# ══════════════════════════════════════════
 echo ""
 echo "══════════════════════════════════════════"
 echo "RÉCAPITULATIF"
@@ -102,7 +123,10 @@ echo "════════════════════════�
 echo ""
 echo "✓ Droits maintainer ajoutés : ${#ADDED[@]}"
 for entry in "${ADDED[@]}"; do
-  echo "    $entry"
+  email="${entry%|*}"
+  gid="${entry#*|}"
+  group_name=$(get_group_name "$gid")
+  echo "    $email → group $gid ($group_name)"
 done
 
 # Déduplication
@@ -124,7 +148,8 @@ for email in "${UNIQUE_UNKNOWN_EMAILS[@]}"; do
 done
 
 echo ""
-echo "✗ Group IDs introuvables : ${#UNIQUE_UNKNOWN_GROUPS[@]}"
+echo "Il est possible qu'un Group ID soit en erreur s'il est introuvable, s'il s'agit d'un Project ID (repository) ou si l'utilisateur n'appartient pas au groupe."
+echo "✗ Group IDs en erreur : ${#UNIQUE_UNKNOWN_GROUPS[@]}"
 for gid in "${UNIQUE_UNKNOWN_GROUPS[@]}"; do
   group_name=$(get_group_name "$gid")
   echo "    $gid ($group_name)"
