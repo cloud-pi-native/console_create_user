@@ -57,6 +57,15 @@ update_user_access_level() {
   ADDED+=("$email → group $group_id")
 }
 
+get_group_name() {
+  local group_id="$1"
+  local response
+  response=$(curl -k -s --request GET \
+    --header "PRIVATE-TOKEN: $MAINT_GITLAB_TOKEN" \
+    --url "$MAINT_GITLAB_URL/api/v4/groups/$group_id")
+  echo "$response" | jq -r '.name // "nom inconnu"'
+}
+
 # Lecture du CSV et traitement
 while IFS=, read -r email group_id; do
 
@@ -117,6 +126,7 @@ done
 echo ""
 echo "✗ Group IDs introuvables : ${#UNIQUE_UNKNOWN_GROUPS[@]}"
 for gid in "${UNIQUE_UNKNOWN_GROUPS[@]}"; do
-  echo "    $gid"
+  group_name=$(get_group_name "$gid")
+  echo "    $gid ($group_name)"
 done
 echo ""
